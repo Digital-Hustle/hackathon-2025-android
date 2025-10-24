@@ -1,0 +1,26 @@
+<resources>
+    <string name="app_name">authTest</string>
+
+
+    <string name="login_header">С возвращением</string>
+    <string name="login_description">Пожалуйста, введите свой адрес электронной почты и пароль</string>
+
+
+    <string name="sing_up_header">Создайте аккаунт</string>
+    <string name="sing_up_description">Это займёт менее 1 минуты</string>
+
+
+    <string name="login">Войти</string>
+    <string name="SingUp">Создать аккаунт</string>
+
+    <string name="email">Электронная почта</string>
+    <string name="password">Пароль</string>
+    <string name="email_example">"ivanivanov@gmail.com"</string>
+
+    <string name="confirm_password">Подтвердить пароль</string>
+
+    <string name="next">Продолжить</string>
+    <string name="or_next_with">Войти с помощью</string>
+
+    <string name="error">Ошибка! Проверьте соединение с интернетом</string>
+</resources>
