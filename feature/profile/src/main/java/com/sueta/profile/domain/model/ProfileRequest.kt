@@ -3,13 +3,13 @@ import com.google.gson.annotations.SerializedName
 
 
 data class ProfileRequest(
-    @SerializedName("age")
-    var age: Int?,
-    @SerializedName("description")
-    var description: String?,
+    @SerializedName("birth_date")
+    var birthDate: String?,
     @SerializedName("name")
     var name: String?,
-    @SerializedName("sex")
-    var sex: Int?,
+    @SerializedName("surname")
+    var surname: String?,
+    @SerializedName("interests")
+    val interest:List<String>?
 )
 

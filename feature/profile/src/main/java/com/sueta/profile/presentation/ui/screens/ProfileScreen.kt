@@ -141,7 +141,7 @@ fun ProfileScreen(
                     "Имя",
                     editable = state.isEdit,
                     onValueChanged = { newValue ->
-                        onEventSent(ProfileContract.Event.NameChanged(newValue))
+                        onEventSent(ProfileContract.Event.OnNameChanged(newValue))
                     }
                 )
             }

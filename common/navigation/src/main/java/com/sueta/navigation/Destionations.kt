@@ -10,6 +10,9 @@ import com.sueta.auth.presentation.screens.AuthScreen
 import com.sueta.main.presentation.MainContract
 import com.sueta.main.presentation.MainViewModel
 import com.sueta.main.presentation.ui.screens.MainScreen
+import com.sueta.onboarding.presentation.OnboardingContract
+import com.sueta.onboarding.presentation.OnboardingViewModel
+import com.sueta.onboarding.presentation.ui.screen.OnboardingScreen
 import com.sueta.profile.presentation.ProfileContract
 import com.sueta.profile.presentation.ProfileViewModel
 import com.sueta.profile.presentation.ui.screens.ProfileScreen
@@ -24,8 +27,8 @@ fun AuthScreenDestination(navController: NavController) {
         effectFlow = viewModel.effect,
         onEventSent = { event -> viewModel.setEvent(event) },
         onNavigationRequested = { navigationEffect ->
-            if (navigationEffect is AuthContract.Effect.Navigation.toMain) {
-                navController.navigateToMain()
+            if (navigationEffect is AuthContract.Effect.Navigation.ToOnboarding) {
+                navController.navigateToOnboarding(navigationEffect.isNewUser)
             }
         }
     )
@@ -42,6 +45,24 @@ fun MainScreenDestination(navController: NavController) {
         onNavigationRequested = { navigationEffect ->
             if (navigationEffect is MainContract.Effect.Navigation.toSelfProfile) {
                 navController.navigateToSelfProfile()
+            }
+
+        },
+    )
+
+}
+
+@Composable
+fun OnboardingScreenDestination(isNewUser: Boolean,navController: NavController) {
+    val viewModel: OnboardingViewModel = hiltViewModel()
+    viewModel.setIsNewUser(isNewUser)
+    OnboardingScreen(
+        state = viewModel.viewState.collectAsState().value,
+        effectFlow = viewModel.effect,
+        onEventSent = { event -> viewModel.setEvent(event) },
+        onNavigationRequested = { navigationEffect ->
+            if (navigationEffect is OnboardingContract.Effect.Navigation.ToMain) {
+                navController.navigateToMain()
             }
 
         },
@@ -98,6 +119,18 @@ fun SelfProfileDestination(navController: NavController) {
 fun NavController.navigateToMain() {
     navigate(route = Navigation.Routes.MAIN)
 }
+
+
+fun NavController.navigateToOnboarding(isNewUser: Boolean) {
+    navigate(
+        Navigation.Routes.ONBOARDING.replace(
+            "{${Navigation.Args.IS_NEW_USER}}", isNewUser.toString()
+        )
+    )
+}
+
+
+
 
 fun NavController.navigateToSelfProfile() {
     navigate(route = Navigation.Routes.SELF_PROFILE)

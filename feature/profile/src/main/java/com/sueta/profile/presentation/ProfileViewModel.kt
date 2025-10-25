@@ -32,15 +32,16 @@ class ProfileViewModel @Inject constructor(
             ProfileContract.Event.BackButtonClicked -> setEffect {
                 ProfileContract.Effect.Navigation.ToMain
             }
-
-            is ProfileContract.Event.AgeChanged -> setState { copy(profile = profile.copy(age = event.query)) }
-            is ProfileContract.Event.DescriptionChanged -> setState {
+            is ProfileContract.Event.OnBirthDateChanged -> TODO()
+            is ProfileContract.Event.OnInterestsChanged -> TODO()
+            is ProfileContract.Event.OnSurnameChanged ->setState {
                 copy(
                     profile = profile.copy(
-                        description = event.query
+                        surname = event.query
                     )
                 )
             }
+
 
             ProfileContract.Event.ImageChangeButtonClicked -> setState {
                 copy(
@@ -48,17 +49,7 @@ class ProfileViewModel @Inject constructor(
                 )
             }
 
-            is ProfileContract.Event.NameChanged -> setState { copy(profile = profile.copy(name = event.query)) }
-            is ProfileContract.Event.SexChanged -> setState {
-                copy(
-                    profile = profile.copy(
-                        sex = Sex.fromId(
-                            event.query
-                        ) ?: Sex.MALE
-                    )
-                )
-            }
-
+            is ProfileContract.Event.OnNameChanged -> setState { copy(profile = profile.copy(name = event.query)) }
             ProfileContract.Event.EditIsOn -> setState { copy(isEdit = true) }
             ProfileContract.Event.EditIsOff -> setState { copy(isEdit = false) }
             is ProfileContract.Event.ImageSelected -> uploadImage(event.uri)
@@ -72,6 +63,7 @@ class ProfileViewModel @Inject constructor(
             ProfileContract.Event.OnDismissMenu -> setState { copy(showMenu = false) }
             ProfileContract.Event.OnMenuBottonClicked ->setState { copy(showMenu = true) }
             ProfileContract.Event.Logout -> setEffect { ProfileContract.Effect.Logout }
+
         }
     }
 

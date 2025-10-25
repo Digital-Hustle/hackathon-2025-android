@@ -1,14 +1,14 @@
-package com.example.auth.presentation.di
+package com.sueta.auth.presentation.di
 
 import android.content.Context
-import com.example.auth.data.network.AuthApiService
-import com.example.auth.data.repository.AuthMockRepository
+import com.sueta.auth.data.network.AuthApiService
+import com.sueta.auth.data.repository.AuthMockRepository
 
-import com.example.auth.data.auth.GoogleManager
-import com.example.authtest.data.repository.AuthRepositoryImpl
-import com.example.authtest.domain.repository.AuthRepository
-import com.example.core.domain.UserStorage
-import com.example.core.presentation.di.RepositoryFactory
+import com.sueta.auth.data.auth.GoogleManager
+import com.sueta.authtest.data.repository.AuthRepositoryImpl
+import com.sueta.authtest.domain.repository.AuthRepository
+import com.sueta.core.domain.UserStorage
+import com.sueta.core.presentation.di.RepositoryFactory
 
 import dagger.Module
 import dagger.Provides

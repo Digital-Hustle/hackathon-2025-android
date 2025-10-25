@@ -56,6 +56,8 @@ dependencies {
 
     implementation(project(":common:core"))
     implementation(project(":common:network"))
+    implementation(project(":feature:onboarding"))
+    
 
 
 

@@ -13,9 +13,18 @@ enum class Sex(val id: Int) {
 
 
 data class Profile(
-    var age: String = "",
-    var description: String = "",
+    var birth: String = "",
+    val surname :String = "",
+    val interests: Set<Interest> = setOf(),
     var name: String = "",
-    var sex: Sex = Sex.MALE,
     var image: Bitmap? = null,
 )
+
+enum class Interest(val value:String) {
+    NATURE("Природа"),
+    CULTURE("Культура"),
+    FOOD("Гастрономия"),
+    SHOPPING("Шопинг"),
+    HISTORICAL("История"),
+    ENTERTAINMENT("Развлечения");
+}

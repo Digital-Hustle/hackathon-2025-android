@@ -37,7 +37,7 @@ class AuthContract {
 
 
         sealed class Navigation : Effect() {
-            object toMain : Navigation()
+            class ToOnboarding(val isNewUser: Boolean) : Navigation()
         }
     }
 

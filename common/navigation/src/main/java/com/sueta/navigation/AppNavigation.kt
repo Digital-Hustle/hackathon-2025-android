@@ -1,7 +1,6 @@
 package com.sueta.navigation
 
 
-import com.sueta.navigation.Navigation.Args.USERNAME
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.hilt.navigation.compose.hiltViewModel
@@ -11,6 +10,8 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
 import com.sueta.navigation.Navigation.Args.CHAT_ID
+import com.sueta.navigation.Navigation.Args.IS_NEW_USER
+import com.sueta.navigation.Navigation.Args.USERNAME
 import com.sueta.network.presentation.TokenViewModel
 import kotlinx.coroutines.launch
 
@@ -55,7 +56,18 @@ fun AppNavigation(startDestination: String) {
         }
         composable(route = Navigation.Routes.AUTH) {
             AuthScreenDestination(navController)
+        }
 
+        composable(
+            route = Navigation.Routes.ONBOARDING,
+            arguments = listOf(
+                navArgument(name = IS_NEW_USER) {
+                    type = NavType.BoolType
+                })
+        ) { backStackEntry ->
+            val isNewUser = backStackEntry.arguments?.getBoolean(IS_NEW_USER) ?: false
+
+            OnboardingScreenDestination(isNewUser,navController)
         }
 
         composable(
@@ -88,6 +100,7 @@ object Navigation {
     object Args {
         const val USERNAME = "username"
         const val CHAT_ID = "chat_id"
+        const val IS_NEW_USER = "is_new_user"
     }
 
     object Routes {
@@ -96,6 +109,7 @@ object Navigation {
         const val SELF_PROFILE = "profile"
         const val SPLASH = "splash"
         const val PROFILE = "$SELF_PROFILE/{$USERNAME}"
+        const val ONBOARDING = "onboarding/{$IS_NEW_USER}"
         const val CHAT = "chat/{$CHAT_ID}"
     }
 

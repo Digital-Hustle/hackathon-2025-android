@@ -1,17 +1,18 @@
 package com.sueta.profile.domain.model
+
 import com.google.gson.annotations.SerializedName
 
 
 data class ProfileResponse(
-    @SerializedName("age")
-    var age: Int?,
-    @SerializedName("description")
-    var description: String?,
     @SerializedName("name")
     var name: String?,
-    @SerializedName("sex")
-    var sex: Int?,
+    @SerializedName("surname")
+    var surname: String?,
+    @SerializedName("birth_date")
+    var birthDate: String?,
+    @SerializedName("interests")
+    val interest: List<String>?,
     @SerializedName("photo")
-    var image:String?,
+    var image: String?,
 )
 

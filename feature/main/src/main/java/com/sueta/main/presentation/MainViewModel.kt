@@ -53,13 +53,20 @@ class MainViewModel @Inject constructor(private val searchManager: SearchManager
             is MainContract.Event.TravelStyleClicked -> setState {
                 copy(
                     bottomSheetState = bottomSheetState.copy(
-                        selectedStyles = if (event.travelStyle in bottomSheetState.selectedStyles) {
-                            bottomSheetState.selectedStyles - event.travelStyle
-                        } else bottomSheetState.selectedStyles + event.travelStyle
+                        selectedStyle = event.travelStyle
                     )
                 )
 
             }
+            is MainContract.Event.RouteTypeClicked -> setState {
+                copy(
+                    bottomSheetState = bottomSheetState.copy(
+                        selectedRouteType = event.routeType
+                    )
+                )
+
+            }
+
 
             MainContract.Event.GoButtonCLicked -> {}
             MainContract.Event.HistoryButtonCLicked -> setEffect { MainContract.Effect.Navigation.toHistory }
@@ -121,6 +128,7 @@ class MainViewModel @Inject constructor(private val searchManager: SearchManager
                     showDetailsBottomSheet = false
                 )
             }
+
         }
 
 

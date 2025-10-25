@@ -10,13 +10,13 @@ class ProfileContract {
 
     sealed class Event : ViewEvent {
 
-        data class NameChanged(val query: String) : Event()
-        data class DescriptionChanged(val query: String) : Event()
-        data class AgeChanged(val query: String) : Event()
-        data class SexChanged(val query: Int) : Event()
+        data class OnNameChanged(val query: String) : Event()
+        data class OnSurnameChanged(val query: String) : Event()
+        data class OnBirthDateChanged(val query: String) : Event()
+        data class OnInterestsChanged(val query: String) : Event()
+
         data class LoadProfile(val username: String?) : Event()
 
-        //        object EditButtonClicked : Event()
         object BackButtonClicked : Event()
         object ImageChangeButtonClicked : Event()
         object DismissImagePickerDialog : Event()
@@ -28,9 +28,9 @@ class ProfileContract {
 
         data class SaveProfile(val profile: Profile) : Event()
 
-        data object OnMenuBottonClicked:Event()
-        data object OnDismissMenu:Event()
-        data object Logout:Event()
+        data object OnMenuBottonClicked : Event()
+        data object OnDismissMenu : Event()
+        data object Logout : Event()
 
 
     }
@@ -44,13 +44,13 @@ class ProfileContract {
         val isLoading: Boolean = false,
         val imageIsLoading: Boolean = false,
         val imagePickerDialogIsOpen: Boolean = false,
-        val showMenu:Boolean = false
+        val showMenu: Boolean = false
 
     ) : ViewState
 
     sealed class Effect : ViewSideEffect {
-//        object ProfileWasLoaded : Effect()
-        object Logout:Effect()
+        //        object ProfileWasLoaded : Effect()
+        object Logout : Effect()
 
 
         sealed class Navigation : Effect() {

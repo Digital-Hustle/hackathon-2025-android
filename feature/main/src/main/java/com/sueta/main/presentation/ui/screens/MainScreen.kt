@@ -47,6 +47,7 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import com.sueta.main.presentation.MainContract
+import com.sueta.main.presentation.RouteType
 import com.sueta.main.presentation.ui.components.BudgetType
 import com.sueta.main.presentation.ui.components.FilterChip
 import com.sueta.main.presentation.ui.components.PointDetailsBottomSheet
@@ -56,13 +57,12 @@ import com.sueta.main.presentation.ui.components.TravelStyle
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.onEach
+import kotlinx.coroutines.launch
 import ru.dgis.sdk.compose.map.MapComposable
-import ru.dgis.sdk.compose.map.controls.CompassComposable
 import ru.dgis.sdk.compose.map.controls.MyLocationComposable
 import ru.dgis.sdk.compose.map.controls.TrafficComposable
 import ru.dgis.sdk.compose.map.controls.ZoomComposable
 import ru.dgis.sdk.map.RenderedObjectInfo
-import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalLayoutApi::class)
 @Composable
@@ -98,9 +98,9 @@ fun MainScreen(
     LaunchedEffect(state.mapState) {
         state.mapState.objectTappedCallback = {
             selectedObject = it
-             coroutineScope.launch{
-                     onEventSent(MainContract.Event.OnMapObjectClicked(it.item))
-             }
+            coroutineScope.launch {
+                onEventSent(MainContract.Event.OnMapObjectClicked(it.item))
+            }
 
         }
     }
@@ -126,9 +126,9 @@ fun MainScreen(
                 )
             },
             onDismiss = { onEventSent(MainContract.Event.OnDismissPointSelectBottomSheet) },
-            )
+        )
     }
-    if (state.showDetailsBottomSheet){
+    if (state.showDetailsBottomSheet) {
         PointDetailsBottomSheet(
             point = state.selectedPoint,
             onDismiss = { onEventSent(MainContract.Event.OnDismissPointDetailsBottomSheet) },
@@ -208,8 +208,26 @@ fun MainScreen(
                             TravelStyle.entries.forEach {
                                 FilterChip(
                                     text = it.value,
-                                    isSelected = it in state.bottomSheetState.selectedStyles,
+                                    isSelected = state.bottomSheetState.selectedStyle == it,
                                     onClick = { onEventSent(MainContract.Event.TravelStyleClicked(it)) })
+                            }
+                        }
+                        Text(
+                            text = "Тип маршрута",
+                            style = MaterialTheme.typography.titleMedium,
+                            color = MaterialTheme.colorScheme.onBackground,
+                            modifier = Modifier.padding(bottom = 16.dp)
+                        )
+
+                        FlowRow(
+                            modifier = Modifier.fillMaxWidth(),
+                            verticalArrangement = Arrangement.Center
+                        ) {
+                            RouteType.entries.forEach {
+                                FilterChip(
+                                    text = it.value,
+                                    isSelected = state.bottomSheetState.selectedRouteType == it,
+                                    onClick = { onEventSent(MainContract.Event.RouteTypeClicked(it)) })
                             }
                         }
                         Spacer(Modifier.fillMaxHeight(0.1f))

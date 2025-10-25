@@ -73,6 +73,8 @@ dependencies {
     implementation(project(":feature:auth"))
     implementation(project(":feature:profile"))
     implementation(project(":feature:main"))
+    implementation(project(":feature:onboarding"))
+
 }
 kapt{
     correctErrorTypes = true

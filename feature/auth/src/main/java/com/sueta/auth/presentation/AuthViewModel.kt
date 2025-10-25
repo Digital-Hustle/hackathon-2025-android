@@ -74,7 +74,7 @@ class AuthViewModel @Inject constructor(
                                 response.data.refreshToken
                             )
                         }
-                        setEffect { AuthContract.Effect.Navigation.toMain }
+                        setEffect { AuthContract.Effect.Navigation.ToOnboarding(viewState.value.isRegistration) }
                     }
 
                     is ApiResponse.Failure -> setState { copy(error = response.errorMessage) }
@@ -110,7 +110,7 @@ class AuthViewModel @Inject constructor(
                                 response.data.refreshToken
                             )
                         }
-                        setEffect { AuthContract.Effect.Navigation.toMain }
+                        setEffect { AuthContract.Effect.Navigation.ToOnboarding(viewState.value.isRegistration) }
 
                     }
 

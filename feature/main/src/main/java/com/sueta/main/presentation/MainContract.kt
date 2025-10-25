@@ -27,6 +27,8 @@ class MainContract {
         data class OnSearchResult(val result: List<DirectoryObject>) : Event()
         data class BudgetClicked(val budgetType: BudgetType) : Event()
         data class TravelStyleClicked(val travelStyle: TravelStyle) : Event()
+        data class RouteTypeClicked(val routeType: RouteType) : Event()
+
         sealed class PointSelectionEvent : ViewEvent {
             data class OnSearchChanged(val query: String) : Event()
             data class Search(val query: String) : Event()
@@ -50,7 +52,7 @@ class MainContract {
         },
         val showPointSelectBottomSheet: Boolean = false,
         val showDetailsBottomSheet: Boolean = false,
-        val selectedPoint : DirectoryObject? = null,
+        val selectedPoint: DirectoryObject? = null,
         val isPointPickOnMap: Boolean = false,
         val bottomSheetState: BottomSheetState = BottomSheetState(),
         val mapState: MapComposableState = MapComposableState(mapOptions),
@@ -61,7 +63,8 @@ class MainContract {
 
     data class BottomSheetState(
         val selectedBudget: BudgetType = BudgetType.ECONOMY,
-        val selectedStyles: Set<TravelStyle> = setOf(TravelStyle.CULTURAL)
+        val selectedRouteType: RouteType  = RouteType.OPTIMAL,
+        val selectedStyle: TravelStyle = TravelStyle.CULTURAL
     )
 
     sealed class Effect : ViewSideEffect {
@@ -80,6 +83,10 @@ class MainContract {
 
 enum class PointType {
     NONE, START, END
+}
+
+enum class RouteType(val value: String) {
+    OPTIMAL("Оптимальный"), LARGE("Расширенный")
 }
 
 

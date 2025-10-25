@@ -11,12 +11,9 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.RoundedCornerShape
-
 import androidx.compose.material3.Button
-
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
-
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
@@ -31,18 +28,18 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.sueta.auth.R
-import com.sueta.network.presentation.TokenViewModel
 import androidx.hilt.navigation.compose.hiltViewModel
+import com.sueta.auth.R
 import com.sueta.auth.presentation.AuthContract
 import com.sueta.auth.presentation.components.GoogleSignInButton
 import com.sueta.auth.presentation.components.LabeledRadioButton
+import com.sueta.auth.presentation.components.LoginOutlinedTextField
 import com.sueta.auth.presentation.components.OutlinedPasswordTextField
 import com.sueta.auth.presentation.components.TextWithDividers
-import com.sueta.auth.presentation.components.LoginOutlinedTextField
+import com.sueta.network.presentation.TokenViewModel
 import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.flow.collect
+import kotlinx.coroutines.flow.onEach
 
 @Composable
 fun AuthScreen(
@@ -66,7 +63,7 @@ fun AuthScreen(
 
 
                 is AuthContract.Effect.LoginWasLoaded -> {
-                    Log.d("mLogEFF",effect.token)
+                    Log.d("mLogEFF", effect.token)
                     tokenViewModel.saveTokens(effect.token, effect.refreshToken)
                 }
 
@@ -75,8 +72,8 @@ fun AuthScreen(
                 )
 
 
-                AuthContract.Effect.Navigation.toMain -> {
-                    onNavigationRequested(AuthContract.Effect.Navigation.toMain)
+                is AuthContract.Effect.Navigation.ToOnboarding -> {
+                    onNavigationRequested(AuthContract.Effect.Navigation.ToOnboarding(effect.isNewUser))
                 }
 
 
@@ -177,7 +174,7 @@ fun AuthScreen(
             AnimatedVisibility(visible = state.error != null) {
                 Spacer(modifier = Modifier.height(16.dp))
                 Text(
-                    text = state.error?:"",
+                    text = state.error ?: "",
                     modifier = Modifier.fillMaxWidth(0.8f),
                     color = MaterialTheme.colorScheme.error,
                     fontSize = 12.sp,
