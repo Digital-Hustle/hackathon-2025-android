@@ -4,6 +4,7 @@ import android.net.Uri
 import com.sueta.core.presentation.ViewEvent
 import com.sueta.core.presentation.ViewSideEffect
 import com.sueta.core.presentation.ViewState
+import com.sueta.profile.presentation.model.Interest
 import com.sueta.profile.presentation.model.Profile
 
 class ProfileContract {
@@ -13,7 +14,7 @@ class ProfileContract {
         data class OnNameChanged(val query: String) : Event()
         data class OnSurnameChanged(val query: String) : Event()
         data class OnBirthDateChanged(val query: String) : Event()
-        data class OnInterestsChanged(val query: String) : Event()
+        data class OnInterestsChanged(val interest: Interest) : Event()
 
         data class LoadProfile(val username: String?) : Event()
 

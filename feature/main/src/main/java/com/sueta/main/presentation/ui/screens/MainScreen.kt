@@ -1,5 +1,6 @@
 package com.sueta.main.presentation.ui.screens
 
+import android.widget.Toast
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
@@ -45,6 +46,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import com.sueta.main.presentation.MainContract
 import com.sueta.main.presentation.RouteType
@@ -72,8 +74,8 @@ fun MainScreen(
     onEventSent: (event: MainContract.Event) -> Unit,
     onNavigationRequested: (MainContract.Effect.Navigation) -> Unit,
 ) {
-    var selectedObject by remember { mutableStateOf<RenderedObjectInfo?>(null) }
     val map by state.mapState.map.collectAsState()
+    val context = LocalContext.current
     val coroutineScope = rememberCoroutineScope()
     val bottomSheetState = rememberStandardBottomSheetState(
         initialValue = SheetValue.Expanded // или Collapsed
@@ -90,6 +92,7 @@ fun MainScreen(
                 MainContract.Effect.Navigation.toHistory -> TODO()
                 MainContract.Effect.PartiallyExpandBottomSheet -> bottomSheetState.partialExpand()
                 MainContract.Effect.ExpandBottomSheet -> bottomSheetState.expand()
+                MainContract.Effect.PointsNotSelected -> Toast(context,"Выберите точки маршрута!",Toats.LENGHT_LONG)
             }
         }?.collect()
 

@@ -20,32 +20,42 @@ class ProfileMockRepository @Inject constructor(private val userStorage: UserSto
             ApiResponse.Success(
                 ProfileResponse(
                     name = username ?: userStorage.getUsername().first()!!,
-                    sex = 0,
-                    age = 20,
-                    description = "20 лет. Разработчик из Ростова-на-Дону",
-                    image = null
+                    image = null,
+                    surname = "Иванов",
+                    birthDate = "25.05.2005",
+                    interest = listOf("Природа","Культура")
                 )
             )
         )
     }
 
     override fun editProfile(profile: ProfileRequest): Flow<ApiResponse<ProfileResponse>> = flow {
-        emit(ApiResponse.Success(ProfileResponse(
-            age = profile.age,
-            description = profile.description,
-            name = profile.name,
-            sex = profile.sex,
-            image = null
-        )))
+        emit(
+            ApiResponse.Success(
+                ProfileResponse(
+                    name = profile.name,
+                    surname = profile.surname,
+                    image = null,
+                    birthDate = profile.birthDate,
+                    interest = profile.interest
+                )
+            )
+        )
     }
 
     override fun uploadImage(
         image: MultipartBody.Part,
 //        description: RequestBody
     ): Flow<ApiResponse<ImageResponse>> = flow {
-        emit(ApiResponse.Success(ImageResponse("succes", ImageManager.getBase64FromMultipartBodyPart(image))))
+        emit(
+            ApiResponse.Success(
+                ImageResponse(
+                    "succes",
+                    ImageManager.getBase64FromMultipartBodyPart(image)
+                )
+            )
+        )
     }
-
 
 
 }

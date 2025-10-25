@@ -71,11 +71,13 @@ class MainContract {
 
         object PartiallyExpandBottomSheet : Effect()
         object ExpandBottomSheet : Effect()
+        object PointsNotSelected :Effect()
 
         sealed class Navigation : Effect() {
             object toSelfProfile : Navigation()
             object toHistory : Navigation()
         }
+
     }
 
 }

@@ -10,9 +10,7 @@ import com.sueta.profile.data.mapper.toProfile
 import com.sueta.profile.data.mapper.toRequest
 import com.sueta.profile.domain.repository.ProfileRepository
 import com.sueta.profile.presentation.model.Profile
-import com.sueta.profile.presentation.model.Sex
 import dagger.hilt.android.lifecycle.HiltViewModel
-
 import javax.inject.Inject
 
 @HiltViewModel
@@ -32,9 +30,22 @@ class ProfileViewModel @Inject constructor(
             ProfileContract.Event.BackButtonClicked -> setEffect {
                 ProfileContract.Effect.Navigation.ToMain
             }
-            is ProfileContract.Event.OnBirthDateChanged -> TODO()
-            is ProfileContract.Event.OnInterestsChanged -> TODO()
-            is ProfileContract.Event.OnSurnameChanged ->setState {
+
+            is ProfileContract.Event.OnBirthDateChanged -> setState {
+                copy(
+                    profile = profile.copy(
+                        birth = event.query
+                    )
+                )
+            }
+
+            is ProfileContract.Event.OnInterestsChanged -> setState {
+                if (event.interest in viewState.value.profile.interests) {
+                    copy(profile = profile.copy(interests = viewState.value.profile.interests + event.interest))
+                } else copy(profile = profile.copy(interests = viewState.value.profile.interests + event.interest))
+            }
+
+            is ProfileContract.Event.OnSurnameChanged -> setState {
                 copy(
                     profile = profile.copy(
                         surname = event.query
@@ -61,13 +72,11 @@ class ProfileViewModel @Inject constructor(
 
             is ProfileContract.Event.SaveProfile -> editProfile(event.profile)
             ProfileContract.Event.OnDismissMenu -> setState { copy(showMenu = false) }
-            ProfileContract.Event.OnMenuBottonClicked ->setState { copy(showMenu = true) }
+            ProfileContract.Event.OnMenuBottonClicked -> setState { copy(showMenu = true) }
             ProfileContract.Event.Logout -> setEffect { ProfileContract.Effect.Logout }
 
         }
     }
-
-
 
 
     private fun getProfile(username: String?) {
@@ -133,7 +142,7 @@ class ProfileViewModel @Inject constructor(
     private fun uploadImage(imageUri: Uri) {
         val imagePart = imageManager.prepareImageForUpload(imageUri)
 
-        Log.d("mLogIMG","TYT")
+        Log.d("mLogIMG", "TYT")
 
         baseRequest(
             errorHandler = object : CoroutinesErrorHandler {
@@ -146,7 +155,7 @@ class ProfileViewModel @Inject constructor(
             onSuccess = { response ->
                 when (response) {
                     is ApiResponse.Success -> {
-                        Log.d("mLogIMG",response.data.data.toString())
+                        Log.d("mLogIMG", response.data.data.toString())
                         setState {
                             copy(
                                 profile = profile.copy(
