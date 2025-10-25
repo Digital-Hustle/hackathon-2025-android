@@ -12,9 +12,9 @@ import androidx.compose.material3.Surface
 import androidx.compose.ui.Modifier
 import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
 import com.sueta.presentation.ui.ForexTheme
-import com.example.navigation.AppNavigation
-import com.example.navigation.Navigation
-import com.example.network.presentation.TokenViewModel
+import com.sueta.navigation.AppNavigation
+import com.sueta.navigation.Navigation
+import com.sueta.network.presentation.TokenViewModel
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.flow.drop
 import kotlinx.coroutines.flow.first

@@ -10,10 +10,10 @@ plugins {
 
 android {
     namespace = "com.sueta.main"
-    compileSdk = 35
+    compileSdk = 36
 
     defaultConfig {
-        minSdk = 34
+        minSdk = 24
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
         consumerProguardFiles("consumer-rules.pro")
@@ -62,5 +62,10 @@ dependencies {
 
 
     implementation (libs.androidx.hilt.navigation.compose.v110)
+    implementation(libs.dgis.sdk)
+    implementation (libs.dgis.compose)
+
+    implementation (libs.androidx.paging.runtime.ktx)
+    implementation (libs.androidx.paging.compose)
     implementation(project(":common:core"))
 }

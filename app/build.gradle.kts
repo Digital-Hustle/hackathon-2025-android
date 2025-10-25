@@ -2,6 +2,7 @@ plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.kotlin.android)
     alias(libs.plugins.kotlin.compose)
+
     id("kotlin-kapt")
     id("com.google.dagger.hilt.android")
 }
@@ -61,7 +62,10 @@ dependencies {
     debugImplementation(libs.androidx.ui.test.manifest)
     implementation(libs.androidx.core.splashscreen)
 
+    implementation(libs.hilt.android)
+    kapt(libs.hilt.android.compiler)
 
+    implementation("ru.dgis.sdk:sdk-full:latest.release")
 
     implementation(project(":common:core"))
     implementation(project(":common:network"))

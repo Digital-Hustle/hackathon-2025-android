@@ -10,6 +10,6 @@
         <item name="windowSplashScreenAnimatedIcon">@drawable/icon_cat</item>
         <!--           <item name="windowSplashScreenAnimationDuration">50</item>-->
 
-        <item name="postSplashScreenTheme">@style/Theme.AuthTest</item>
+        <item name="postSplashScreenTheme">@style/Theme.SuetaRND</item>
     </style>
 </resources>

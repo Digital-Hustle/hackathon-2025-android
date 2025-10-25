@@ -18,10 +18,10 @@ val socketBackendURL = "ws://$BACKEND_HOST_PORT/ws"
 //val USE_MOCKS :Boolean by project
 android {
     namespace = "com.sueta.core"
-    compileSdk = 35
+    compileSdk = 36
 
     defaultConfig {
-        minSdk = 34
+        minSdk = 24
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
         consumerProguardFiles("consumer-rules.pro")
