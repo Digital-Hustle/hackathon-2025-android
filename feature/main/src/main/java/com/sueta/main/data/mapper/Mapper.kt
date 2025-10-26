@@ -1,6 +1,6 @@
 package com.sueta.main.data.mapper
 
-import androidx.compose.ui.geometry.Size
+import android.util.Size
 import com.sueta.core.mLog
 import com.sueta.main.R
 import com.sueta.main.domain.model.EventResponse
@@ -81,10 +81,17 @@ fun Place.toMarker(sdkContext: Context): Marker = Marker(
         position = GeoPointWithElevation(
             latitude = this.point.latitude.value,
             longitude = this.point.longitude.value
-        ), icon = imageFromResource(sdkContext, R.drawable.loc_foreground,size = Size(0.6f))
+        ), icon = imageFromResource(sdkContext, R.drawable.loc_foreground,size = Size(
+            100,100
+        )
+        )
     )
 )
 
+
+fun List<RouteResponse>.toRoutes():List<Route>{
+    return this.map { it.toRoute() }
+}
 
 fun List<Place>.toGeoPoints(): List<GeoPoint> {
     return this.map { it.toGeoPoint() }

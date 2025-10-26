@@ -5,6 +5,7 @@ import com.sueta.main.domain.model.RouteRequest
 import com.sueta.main.domain.model.RouteResponse
 import retrofit2.Response
 import retrofit2.http.Body
+import retrofit2.http.POST
 
 interface MainApiService {
 
@@ -22,7 +23,7 @@ interface MainApiService {
 //    suspend fun uploadImage(
 //        @Part image: MultipartBody.Part,
 //    ):Response<ImageResponse>
-
+    @POST("routes/api/v1/routes/generate")
     suspend fun createRoute(@Body route: RouteRequest): Response<RouteResponse>
 
     suspend fun getUserRoutes(userId: String): Response<List<RouteResponse>>

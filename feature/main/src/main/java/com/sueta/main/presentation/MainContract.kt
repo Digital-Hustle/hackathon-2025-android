@@ -1,6 +1,5 @@
 package com.sueta.main.presentation
 
-import android.view.View
 import com.sueta.core.presentation.ViewEvent
 import com.sueta.core.presentation.ViewSideEffect
 import com.sueta.core.presentation.ViewState
@@ -31,6 +30,8 @@ class MainContract {
 
         object OnDismissPointSelectBottomSheet : Event()
         object OnDismissPointDetailsBottomSheet : Event()
+        object OnDismissHistoryBottomSheet : Event()
+
 
         data class OnSelectPointButtonClicked(val pointType: PointType) : Event()
         data class OnSearchResult(val result: List<DirectoryObject>) : Event()
@@ -52,9 +53,11 @@ class MainContract {
             data class OnPlaceItemClicked(val place: Place): Event()
             object OnDismissPlaceDetailsBottomSheet : Event()
             object OnRouteBottomSheetBackPressed:Event()
+        }
 
-
-
+        sealed class HistoryEvent: ViewEvent{
+            data class ChangeHistoryTypeButtonClicked(val select: Boolean) : Event()
+            data class OnHistoryItemClicked(val route: Route):Event()
         }
 
 //
@@ -79,9 +82,11 @@ class MainContract {
 
         val showPlaceDetailsBottomSheet: Boolean = false,
         val showEventDetailsBottomSheet: Boolean = false,
+        val showHistoryBottomSheet: Boolean = false,
+
 
         val routeBottomSheetState: RouteBottomSheetState = RouteBottomSheetState(),
-
+        val historyBottomSheetState: HistoryBottomSheetState = HistoryBottomSheetState(),
         val selectedPoint: DirectoryObject? = null,
         val isPointPickOnMap: Boolean = false,
 
@@ -109,7 +114,12 @@ class MainContract {
         val route: Route? = null,
         val selectedTransportType: TransportType = TransportType.WALKING,
         val selectedPlace: Place? = null,
-        val selectedEvent: com.sueta.main.presentation.model.Event? = null
+        val selectedEvent: ModelEvent? = null
+    )
+
+    data class HistoryBottomSheetState(
+        val routes :List<Route> = emptyList(),
+        val isTopTen : Boolean = false
     )
 
     sealed class Effect : ViewSideEffect {

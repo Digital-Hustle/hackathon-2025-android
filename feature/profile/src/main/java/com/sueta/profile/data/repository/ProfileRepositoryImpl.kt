@@ -17,17 +17,21 @@ class ProfileRepositoryImpl @Inject constructor(
     private val apiService: ProfileApiService,
     private val userStorage: UserStorage
 ) : ProfileRepository {
-    override fun getProfile(username: String?): Flow<ApiResponse<ProfileResponse>> = apiRequestFlow {
-        if (username != null) {
-            apiService.getProfile(username)
-        } else {
-            apiService.getProfile(userStorage.getUsername().first()!!)
-        }
-    }
+    override fun getProfile(username: String?): Flow<ApiResponse<ProfileResponse>> =
+        apiRequestFlow {
+            apiService.getProfile(userStorage.getId().first()!!)
 
-    override fun editProfile(profile: ProfileRequest): Flow<ApiResponse<ProfileResponse>> = apiRequestFlow {
-        apiService.editUserProfile(profile)
-    }
+//            if (username != null) {
+//                apiService.getProfile(username)
+//            } else {
+//                apiService.getProfile(userStorage.getUsername().first()!!)
+//            }
+        }
+
+    override fun editProfile(profile: ProfileRequest): Flow<ApiResponse<ProfileResponse>> =
+        apiRequestFlow {
+            apiService.editUserProfile(userStorage.getId().first()!!, profile)
+        }
 
     override fun uploadImage(
         image: MultipartBody.Part,
@@ -35,8 +39,6 @@ class ProfileRepositoryImpl @Inject constructor(
     ): Flow<ApiResponse<ImageResponse>> = apiRequestFlow {
         apiService.uploadImage(image)
     }
-
-
 
 
 }

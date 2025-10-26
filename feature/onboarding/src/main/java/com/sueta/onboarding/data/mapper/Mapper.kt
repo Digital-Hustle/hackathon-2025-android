@@ -20,6 +20,7 @@ fun Profile.toRequest(): ProfileRequest {
         birthDate = birth,
         surname = surname,
         interest = interests.toStringList(),
+        image = null
     )
 
 }

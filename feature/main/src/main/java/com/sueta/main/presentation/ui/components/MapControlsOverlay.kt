@@ -52,7 +52,7 @@ fun MapControlsOverlay(
                     .size(48.dp)
                     .clip(CircleShape)
                     .background(MaterialTheme.colorScheme.tertiary),
-                onClick = { onEventSent(MainContract.Event.OnProfileButtonCLicked) }) {
+                onClick = { onEventSent(MainContract.Event.OnHistoryButtonCLicked) }) {
                 Icon(Icons.Default.Bookmark, "История")
             }
 

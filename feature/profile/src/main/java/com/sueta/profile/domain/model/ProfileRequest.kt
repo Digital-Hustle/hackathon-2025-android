@@ -3,7 +3,7 @@ import com.google.gson.annotations.SerializedName
 
 
 data class ProfileRequest(
-    @SerializedName("birth_date")
+    @SerializedName("dateOfBirth")
     var birthDate: String?,
     @SerializedName("name")
     var name: String?,

@@ -7,8 +7,10 @@ import com.sueta.core.presentation.CoroutinesErrorHandler
 import com.sueta.main.data.mapper.toGeoPoint
 import com.sueta.main.data.mapper.toMarkers
 import com.sueta.main.data.mapper.toRoute
+import com.sueta.main.data.mapper.toRoutes
 import com.sueta.main.domain.repository.MainRepository
 import com.sueta.main.presentation.model.PointType
+import com.sueta.main.presentation.model.Route
 import com.sueta.main.presentation.model.TransportType
 import com.sueta.network.ApiResponse
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -21,12 +23,9 @@ import ru.dgis.sdk.Meter
 import ru.dgis.sdk.coordinates.GeoPoint
 import ru.dgis.sdk.directory.SearchManager
 import ru.dgis.sdk.directory.SearchQueryBuilder
-import ru.dgis.sdk.geometry.GeoPointWithElevation
 import ru.dgis.sdk.map.DgisMapObject
 import ru.dgis.sdk.map.DgisSource
 import ru.dgis.sdk.map.MapObjectManager
-import ru.dgis.sdk.map.Marker
-import ru.dgis.sdk.map.MarkerOptions
 import ru.dgis.sdk.map.RenderedObject
 import ru.dgis.sdk.map.RouteEditorSource
 import ru.dgis.sdk.routing.BicycleRouteSearchOptions
@@ -113,7 +112,19 @@ class MainViewModel @Inject constructor(
                 }
             }
 
-            MainContract.Event.OnHistoryButtonCLicked -> setEffect { MainContract.Effect.Navigation.toHistory }
+            MainContract.Event.OnHistoryButtonCLicked -> {
+                setState {
+                    copy(showHistoryBottomSheet = true)
+
+                }
+                getRoutes()
+                setEffect { MainContract.Effect.PartiallyExpandBottomSheet }
+            }
+
+            MainContract.Event.OnDismissHistoryBottomSheet -> setState {
+                copy(showHistoryBottomSheet = false)
+            }
+
             is MainContract.Event.PointSelectionEvent.OnSearchChanged -> {
                 setState {
                     copy(pointSelectionState = pointSelectionState.copy(searchQuery = event.query))
@@ -195,6 +206,21 @@ class MainViewModel @Inject constructor(
                 )
             }
 
+            is MainContract.Event.HistoryEvent.ChangeHistoryTypeButtonClicked -> {
+                setState {
+                    copy(
+                        historyBottomSheetState = historyBottomSheetState.copy(isTopTen = !event.select),
+                        error = null
+                    )
+                }
+                getRoutes()
+            }
+
+            is MainContract.Event.HistoryEvent.OnHistoryItemClicked -> {
+                setRoute(event.route)
+                setState { copy(showHistoryBottomSheet = false) }
+                setEffect { MainContract.Effect.ExpandBottomSheet }
+            }
         }
 
 
@@ -220,30 +246,30 @@ class MainViewModel @Inject constructor(
         val id = (renderedObject.item as DgisMapObject).id
 
         searchManager.searchByDirectoryObjectId(id).onResult onDirectoryObjectReady@{
-                val obj = it ?: return@onDirectoryObjectReady
+            val obj = it ?: return@onDirectoryObjectReady
 
-                if (viewState.value.isPointPickOnMap) {
-                    setState {
-                        if (pointSelectionState.selectedPoint == PointType.START) {
-                            copy(pointSelectionState = pointSelectionState.copy(startPoint = it))
-                        } else copy(pointSelectionState = pointSelectionState.copy(endPoint = it))
-                    }
-                    setEffect { MainContract.Effect.ExpandBottomSheet }
-
-                } else {
-                    setState { copy(selectedPoint = obj, showDetailsBottomSheet = true) }
-                    setEffect { MainContract.Effect.PartiallyExpandBottomSheet }
-
+            if (viewState.value.isPointPickOnMap) {
+                setState {
+                    if (pointSelectionState.selectedPoint == PointType.START) {
+                        copy(pointSelectionState = pointSelectionState.copy(startPoint = it))
+                    } else copy(pointSelectionState = pointSelectionState.copy(endPoint = it))
                 }
+                setEffect { MainContract.Effect.ExpandBottomSheet }
 
-                val entrancesIds = obj.entrances.map { entranceInfo ->
-                    entranceInfo.id
-                } as MutableList<DgisObjectId>
-                entrancesIds.add(id)
+            } else {
+                setState { copy(selectedPoint = obj, showDetailsBottomSheet = true) }
+                setEffect { MainContract.Effect.PartiallyExpandBottomSheet }
 
-                source.setHighlighted(source.highlightedObjects, false)
-                source.setHighlighted(entrancesIds, true)
             }
+
+            val entrancesIds = obj.entrances.map { entranceInfo ->
+                entranceInfo.id
+            } as MutableList<DgisObjectId>
+            entrancesIds.add(id)
+
+            source.setHighlighted(source.highlightedObjects, false)
+            source.setHighlighted(entrancesIds, true)
+        }
     }
 
     private fun getRoute() {
@@ -286,6 +312,16 @@ class MainViewModel @Inject constructor(
                 }
             }
         })
+    }
+
+    private fun setRoute(route: Route) {
+        setState {
+            copy(
+                routeBottomSheetState = routeBottomSheetState.copy(route = route),
+                isLoading = false
+            )
+        }
+        setRouteOnMap()
     }
 
     private fun setRouteOnMap() {
@@ -344,10 +380,11 @@ class MainViewModel @Inject constructor(
 
 
                     val mapObjectManager = MapObjectManager(map)
-                    viewState.value.routeBottomSheetState.route?.places?.toMarkers(sdkContext)?.forEach {
-                        mapObjectManager.addObject(it)
+                    viewState.value.routeBottomSheetState.route?.places?.toMarkers(sdkContext)
+                        ?.forEach {
+                            mapObjectManager.addObject(it)
 
-                    }
+                        }
 
 
                     routeEditor.setRouteParams(
@@ -366,6 +403,40 @@ class MainViewModel @Inject constructor(
         }
 
 
+    }
+
+    private fun getRoutes() {
+        baseRequest(errorHandler = object : CoroutinesErrorHandler {
+            override fun onError(message: String) {
+                setState { copy(error = message) }
+//                    setEffect { CurrencyEffect.ShowError(message) }
+            }
+        }, request = {
+            if (viewState.value.historyBottomSheetState.isTopTen) {
+                repository.getTopTenRoutes()
+            } else {
+                repository.getUserRoutes()
+            }
+        }, onSuccess = { response ->
+            when (response) {
+                is ApiResponse.Success -> {
+                    setState {
+                        copy(
+                            historyBottomSheetState = historyBottomSheetState.copy(routes = response.data.toRoutes()),
+                        )
+                    }
+//                        setEffect { ProfileContract.Effect.ProfileWasLoaded }
+                }
+
+                is ApiResponse.Failure -> setState { copy(error = response.errorMessage) }
+                is ApiResponse.Loading -> setState {
+                    copy(
+                        isLoading = true,
+                        error = null,
+                    )
+                }
+            }
+        })
     }
 
 }

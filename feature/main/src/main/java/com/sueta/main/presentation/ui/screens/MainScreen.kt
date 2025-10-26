@@ -17,6 +17,7 @@ import androidx.compose.ui.platform.LocalContext
 import com.sueta.main.presentation.MainContract
 import com.sueta.main.presentation.ui.components.MapControlsOverlay
 import com.sueta.main.presentation.ui.components.bottom_sheet.BaseBottomSheetScaffold
+import com.sueta.main.presentation.ui.components.bottom_sheet.HistoryDetailsBottomSheet
 import com.sueta.main.presentation.ui.components.bottom_sheet.MainBottomSheetContent
 import com.sueta.main.presentation.ui.components.bottom_sheet.PlaceDetailsBottomSheet
 import com.sueta.main.presentation.ui.components.bottom_sheet.PointDetailsBottomSheet
@@ -112,6 +113,12 @@ fun MainScreen(
             state.routeBottomSheetState.selectedPlace,
             onDismiss = { onEventSent(MainContract.Event.RouteEvent.OnDismissPlaceDetailsBottomSheet) },
 
+            )
+    }
+
+    if (state.showHistoryBottomSheet) {
+        HistoryDetailsBottomSheet(
+            state, onEventSent
         )
     }
 

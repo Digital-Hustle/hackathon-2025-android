@@ -110,17 +110,287 @@ class MainMockRepository @Inject constructor(private val userStorage: UserStorag
         )
     }
 
-    override fun getRouteById(id: String): Flow<ApiResponse<RouteResponse>> {
-        TODO("Not yet implemented")
+    override fun getRouteById(id: String): Flow<ApiResponse<RouteResponse>> = flow {
+        emit(
+            ApiResponse.Success(
+                RouteResponse(
+                    id = "test_id",
+                    places = listOf(
+                        PlaceResponse(
+                            address = "Пушкина",
+                            events = listOf(
+                                EventResponse(
+                                    ageRestriction = 14,
+                                    date = "25.05.2005",
+                                    duration = "1.5 часа",
+                                    id = "ididid",
+                                    price = 1500,
+                                    title = "Обрезание"
+                                ),EventResponse(
+                                    ageRestriction = 14,
+                                    date = "25.05.2005",
+                                    duration = "1.5 часа",
+                                    id = "ididid",
+                                    price = 1500,
+                                    title = "Обрезание"
+                                )
+                            ),
+                            id = "test_id2",
+                            image = null,
+                            latitude = 47.237394,
+                            longitude = 39.712237,
+                            title = "Кофейня"
+                        ), PlaceResponse(
+                            address = "Шушкина",
+                            events = emptyList(),
+                            id = "test_id2",
+                            image = null,
+                            latitude = 47.239868,
+                            longitude = 39.700068,
+                            title = "Кофейня"
+                        )
+                    )
+                )
+            )
+        )
     }
 
-    override fun getUserRoutes(): Flow<ApiResponse<List<RouteResponse>>> {
-        TODO("Not yet implemented")
+    override fun getUserRoutes(): Flow<ApiResponse<List<RouteResponse>>> = flow {
+        emit(
+            ApiResponse.Success(listOf(
+                RouteResponse(
+                    id = "test_id",
+                    places = listOf(
+                        PlaceResponse(
+                            address = "Пушкина",
+                            events = listOf(
+                                EventResponse(
+                                    ageRestriction = 14,
+                                    date = "25.05.2005",
+                                    duration = "1.5 часа",
+                                    id = "ididid",
+                                    price = 1500,
+                                    title = "Обрезание"
+                                ),EventResponse(
+                                    ageRestriction = 14,
+                                    date = "25.05.2005",
+                                    duration = "1.5 часа",
+                                    id = "ididid",
+                                    price = 1500,
+                                    title = "Обрезание"
+                                )
+                            ),
+                            id = "test_id2",
+                            image = null,
+                            latitude = 47.237394,
+                            longitude = 39.712237,
+                            title = "Кофейня"
+                        ), PlaceResponse(
+                            address = "Шушкина",
+                            events = emptyList(),
+                            id = "test_id2",
+                            image = null,
+                            latitude = 47.239868,
+                            longitude = 39.700068,
+                            title = "Кофейня"
+                        )
+                    )
+                ),RouteResponse(
+                    id = "test_i2",
+                    places = listOf(
+                        PlaceResponse(
+                            address = "Пушкина",
+                            events = listOf(
+                                EventResponse(
+                                    ageRestriction = 14,
+                                    date = "25.05.2005",
+                                    duration = "1.5 часа",
+                                    id = "ididid",
+                                    price = 1500,
+                                    title = "Обрезание"
+                                ),EventResponse(
+                                    ageRestriction = 14,
+                                    date = "25.05.2005",
+                                    duration = "1.5 часа",
+                                    id = "ididid",
+                                    price = 1500,
+                                    title = "Обрезание"
+                                )
+                            ),
+                            id = "test_id2",
+                            image = null,
+                            latitude = 47.237394,
+                            longitude = 39.712237,
+                            title = "Кофейня"
+                        ), PlaceResponse(
+                            address = "Шушкина",
+                            events = emptyList(),
+                            id = "test_id2",
+                            image = null,
+                            latitude = 47.239868,
+                            longitude = 39.700068,
+                            title = "Кофейня"
+                        )
+                    )
+                ),RouteResponse(
+                    id = "test_id3",
+                    places = listOf(
+                        PlaceResponse(
+                            address = "Пушкина",
+                            events = listOf(
+                                EventResponse(
+                                    ageRestriction = 14,
+                                    date = "25.05.2005",
+                                    duration = "1.5 часа",
+                                    id = "ididid",
+                                    price = 1500,
+                                    title = "Обрезание"
+                                ),EventResponse(
+                                    ageRestriction = 14,
+                                    date = "25.05.2005",
+                                    duration = "1.5 часа",
+                                    id = "ididid",
+                                    price = 1500,
+                                    title = "Обрезание"
+                                )
+                            ),
+                            id = "test_id2",
+                            image = null,
+                            latitude = 47.237394,
+                            longitude = 39.712237,
+                            title = "Кофейня"
+                        ), PlaceResponse(
+                            address = "Шушкина",
+                            events = emptyList(),
+                            id = "test_id2",
+                            image = null,
+                            latitude = 47.239868,
+                            longitude = 39.700068,
+                            title = "Кофейня"
+                        )
+                    )
+                ))
+            )
+        )
     }
 
-    override fun getTopTenRoutes(): Flow<ApiResponse<List<RouteResponse>>> {
-        TODO("Not yet implemented")
+    override fun getTopTenRoutes(): Flow<ApiResponse<List<RouteResponse>>> = flow {
+        emit(
+            ApiResponse.Success(listOf(
+                RouteResponse(
+                    id = "test_id",
+                    places = listOf(
+                        PlaceResponse(
+                            address = "Пушкина",
+                            events = listOf(
+                                EventResponse(
+                                    ageRestriction = 14,
+                                    date = "25.05.2005",
+                                    duration = "1.5 часа",
+                                    id = "ididid",
+                                    price = 1500,
+                                    title = "Обрезание"
+                                ),EventResponse(
+                                    ageRestriction = 14,
+                                    date = "25.05.2005",
+                                    duration = "1.5 часа",
+                                    id = "ididid",
+                                    price = 1500,
+                                    title = "Обрезание"
+                                )
+                            ),
+                            id = "test_id2",
+                            image = null,
+                            latitude = 47.237394,
+                            longitude = 39.712237,
+                            title = "Кофейня"
+                        ), PlaceResponse(
+                            address = "Шушкина",
+                            events = emptyList(),
+                            id = "test_id2",
+                            image = null,
+                            latitude = 47.239868,
+                            longitude = 39.700068,
+                            title = "Кофейня"
+                        )
+                    )
+                ),RouteResponse(
+                    id = "test_i2",
+                    places = listOf(
+                        PlaceResponse(
+                            address = "Пушкина",
+                            events = listOf(
+                                EventResponse(
+                                    ageRestriction = 14,
+                                    date = "25.05.2005",
+                                    duration = "1.5 часа",
+                                    id = "ididid",
+                                    price = 1500,
+                                    title = "Обрезание"
+                                ),EventResponse(
+                                    ageRestriction = 14,
+                                    date = "25.05.2005",
+                                    duration = "1.5 часа",
+                                    id = "ididid",
+                                    price = 1500,
+                                    title = "Обрезание"
+                                )
+                            ),
+                            id = "test_id2",
+                            image = null,
+                            latitude = 47.237394,
+                            longitude = 39.712237,
+                            title = "Кофейня"
+                        ), PlaceResponse(
+                            address = "Шушкина",
+                            events = emptyList(),
+                            id = "test_id2",
+                            image = null,
+                            latitude = 47.239868,
+                            longitude = 39.700068,
+                            title = "Кофейня"
+                        )
+                    )
+                ),RouteResponse(
+                    id = "test_id3",
+                    places = listOf(
+                        PlaceResponse(
+                            address = "Пушкина",
+                            events = listOf(
+                                EventResponse(
+                                    ageRestriction = 14,
+                                    date = "25.05.2005",
+                                    duration = "1.5 часа",
+                                    id = "ididid",
+                                    price = 1500,
+                                    title = "Обрезание"
+                                ),EventResponse(
+                                    ageRestriction = 14,
+                                    date = "25.05.2005",
+                                    duration = "1.5 часа",
+                                    id = "ididid",
+                                    price = 1500,
+                                    title = "Обрезание"
+                                )
+                            ),
+                            id = "test_id2",
+                            image = null,
+                            latitude = 47.237394,
+                            longitude = 39.712237,
+                            title = "Кофейня"
+                        ), PlaceResponse(
+                            address = "Шушкина",
+                            events = emptyList(),
+                            id = "test_id2",
+                            image = null,
+                            latitude = 47.239868,
+                            longitude = 39.700068,
+                            title = "Кофейня"
+                        )
+                    )
+                ))
+            )
+        )
     }
-
 
 }

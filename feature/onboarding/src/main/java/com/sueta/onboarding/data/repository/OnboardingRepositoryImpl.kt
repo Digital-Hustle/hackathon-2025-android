@@ -8,6 +8,7 @@ import com.sueta.onboarding.domain.model.ProfileRequest
 import com.sueta.onboarding.domain.model.ProfileResponse
 import com.sueta.onboarding.domain.repository.OnboardingRepository
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.first
 import javax.inject.Inject
 
 class OnboardingRepositoryImpl @Inject constructor(

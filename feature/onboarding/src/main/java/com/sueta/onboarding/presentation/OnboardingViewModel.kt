@@ -108,7 +108,10 @@ class OnboardingViewModel @Inject constructor(
 //                    setEffect { CurrencyEffect.ShowError(message) }
                 }
             },
-            request = { repository.setProfile(profile = profile.toRequest()) },
+            request = {
+                val profile_ = profile.copy(birth = profile.birth.replace(".", "-"))
+                repository.setProfile(profile = profile_.toRequest())
+            },
             onSuccess = { response ->
                 when (response) {
                     is ApiResponse.Success -> {

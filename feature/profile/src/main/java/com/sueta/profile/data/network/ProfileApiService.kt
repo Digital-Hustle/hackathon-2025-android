@@ -10,22 +10,24 @@ import retrofit2.http.Body
 import retrofit2.http.GET
 import retrofit2.http.Multipart
 import retrofit2.http.POST
+import retrofit2.http.PUT
 import retrofit2.http.Part
 import retrofit2.http.Path
 
 interface ProfileApiService {
 
 
-    @GET("/api/v1/profile/username/{username}")
-    suspend fun getProfile(@Path("username") username: String): Response<ProfileResponse>
+    @GET("profile/api/v1/profile/{id}")
+    suspend fun getProfile(@Path("id") id: String): Response<ProfileResponse>
 
-    @POST("/api/v1/profile/edit")
+    @PUT("profile/api/v1/profile/{id}")
     suspend fun editUserProfile(
+        @Path("id") id:String,
         @Body profile: ProfileRequest
     ): Response<ProfileResponse>
 
     @Multipart
-    @POST("/api/v1/profile/photo")
+    @POST("profile/api/v1/profile/photo")
     suspend fun uploadImage(
         @Part image: MultipartBody.Part,
     ):Response<ImageResponse>
