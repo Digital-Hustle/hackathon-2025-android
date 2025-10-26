@@ -4,22 +4,25 @@ import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.filled.DirectionsWalk
+import androidx.compose.material.icons.filled.DirectionsCar
+import androidx.compose.material.icons.filled.PedalBike
+import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
-import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
-import com.sueta.main.presentation.model.TravelStyle
-
+import com.sueta.main.presentation.model.TransportType
 
 
 
 @Composable
-fun FilterChip(
-    text: String,
+fun TransportTypeChip(
+    transportType: TransportType,
     isSelected: Boolean,
     onClick: () -> Unit
 ) {
@@ -49,11 +52,14 @@ fun FilterChip(
             contentAlignment = Alignment.Center,
             modifier = Modifier.padding(vertical = 5.dp, horizontal = 12.dp)
         ) {
-            Text(
-                text = text,
-                style = MaterialTheme.typography.bodyMedium,
-                color = contentColor
+            Icon(
+                when (transportType) {
+                    TransportType.WALKING -> Icons.AutoMirrored.Filled.DirectionsWalk
+                    TransportType.CAR -> Icons.Default.DirectionsCar
+                    TransportType.BICYCLE -> Icons.Default.PedalBike
+                }, "Транспорт", tint = contentColor
             )
+
         }
     }
 }

@@ -60,6 +60,10 @@ dependencies {
     implementation(libs.hilt.android)
     kapt(libs.hilt.android.compiler)
 
+    implementation(libs.retrofit)
+    implementation(libs.converter.gson)
+
+
 
     implementation (libs.androidx.hilt.navigation.compose.v110)
     implementation(libs.dgis.sdk)
@@ -68,4 +72,6 @@ dependencies {
     implementation (libs.androidx.paging.runtime.ktx)
     implementation (libs.androidx.paging.compose)
     implementation(project(":common:core"))
+    implementation(project(":common:network"))
+
 }

@@ -2,15 +2,6 @@ package com.sueta.profile.presentation.model
 
 import android.graphics.Bitmap
 
-enum class Sex(val id: Int) {
-    MALE(1),
-    FEMALE(0);
-
-    companion object {
-        fun fromId(id: Int): Sex? = entries.find { it.id == id }
-    }
-}
-
 
 data class Profile(
     var birth: String = "",

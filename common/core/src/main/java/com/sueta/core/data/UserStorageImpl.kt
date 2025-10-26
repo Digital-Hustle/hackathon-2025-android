@@ -3,14 +3,14 @@ package com.sueta.core.data
 import android.content.Context
 import android.util.Log
 import androidx.datastore.preferences.core.edit
-import androidx.datastore.preferences.core.intPreferencesKey
 import androidx.datastore.preferences.core.stringPreferencesKey
+import androidx.datastore.preferences.core.stringSetPreferencesKey
 import com.sueta.core.domain.UserStorage
 import com.sueta.core.presentation.di.userDataStore
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
 
-class UserStorageImpl(private val context:Context):UserStorage {
+class UserStorageImpl(private val context: Context) : UserStorage {
 
 
 //    init {
@@ -20,15 +20,25 @@ class UserStorageImpl(private val context:Context):UserStorage {
 //    }
 
     companion object {
-        private val ID_KEY = intPreferencesKey("id")
+        private val ID_KEY = stringPreferencesKey("id")
         private val USERNAME_KEY = stringPreferencesKey("username")
         private val NAME_KEY = stringPreferencesKey("name")
+        private val CATEGORIES_KEY = stringSetPreferencesKey("categories")
     }
-
 
 
     override fun getUsername(): Flow<String?> =
         context.userDataStore.data.map { preferences -> preferences[USERNAME_KEY] }
+
+    override suspend fun setCategories(categories: Set<String>) {
+        context.userDataStore.edit { preferences ->
+            preferences[CATEGORIES_KEY] = categories
+        }
+    }
+
+    override fun getCategories(): Flow<Set<String>?> =
+        context.userDataStore.data.map { preferences -> preferences[CATEGORIES_KEY] }
+
 
     override suspend fun setName(name: String) {
         context.userDataStore.edit { preferences ->
@@ -45,14 +55,14 @@ class UserStorageImpl(private val context:Context):UserStorage {
         }
     }
 
-    override fun getId(): Flow<Int?> =
+    override fun getId(): Flow<String?> =
         context.userDataStore.data.map { preferences ->
-            val id =  preferences[ID_KEY]
-            Log.d("mLogSTORAGE",id.toString())
+            val id = preferences[ID_KEY]
+            Log.d("mLogSTORAGE", id.toString())
             id
         }
 
-    override suspend fun setId(id: Int) {
+    override suspend fun setId(id: String) {
         context.userDataStore.edit { preferences ->
             preferences[ID_KEY] = id
         }

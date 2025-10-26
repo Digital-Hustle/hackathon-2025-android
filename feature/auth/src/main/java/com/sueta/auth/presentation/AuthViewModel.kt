@@ -3,7 +3,7 @@ package com.sueta.auth.presentation
 import androidx.lifecycle.viewModelScope
 import com.sueta.auth.domain.models.LoginRequest
 import com.sueta.auth.domain.models.RegistrationRequest
-import com.sueta.authtest.domain.repository.AuthRepository
+import com.sueta.auth.domain.repository.AuthRepository
 import com.sueta.core.presentation.BaseViewModel
 import com.sueta.core.presentation.CoroutinesErrorHandler
 import com.sueta.network.ApiResponse
@@ -154,7 +154,7 @@ class AuthViewModel @Inject constructor(
         )
     }
 
-    private suspend fun setId(id: Int) {
+    private suspend fun setId(id: String) {
         repository.setId(id)
     }
 

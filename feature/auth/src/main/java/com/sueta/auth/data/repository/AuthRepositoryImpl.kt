@@ -5,7 +5,7 @@ import com.sueta.auth.domain.models.GoogleAuthRequest
 import com.sueta.auth.data.auth.GoogleManager
 import com.sueta.auth.domain.models.LoginRequest
 import com.sueta.auth.domain.models.RegistrationRequest
-import com.sueta.authtest.domain.repository.AuthRepository
+import com.sueta.auth.domain.repository.AuthRepository
 import com.sueta.core.domain.UserStorage
 import com.sueta.network.apiRequestFlow
 import javax.inject.Inject
@@ -20,12 +20,11 @@ class AuthRepositoryImpl @Inject constructor(
         authApiService.login(loginRequest)
     }
 
-
-
-
-    override suspend fun setId(id: Int) {
+    override suspend fun setId(id: String) {
         storage.setId(id)
     }
+
+
 
     override suspend fun setUserName(name: String) {
         storage.setUsername(name)

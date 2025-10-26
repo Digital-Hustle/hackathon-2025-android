@@ -1,4 +1,4 @@
-package com.sueta.authtest.domain.repository
+package com.sueta.auth.domain.repository
 
 import com.sueta.auth.domain.models.LoginRequest
 import com.sueta.auth.domain.models.LoginResponse
@@ -9,14 +9,12 @@ import com.sueta.auth.domain.models.RegistrationResponse
 
 interface AuthRepository {
 
-    suspend fun setId(id: Int)
+    suspend fun setId(id: String)
     suspend fun setUserName(name: String)
 
     fun login(loginRequest: LoginRequest): Flow<ApiResponse<LoginResponse>>
 
     fun loginWithGoogle():Flow<ApiResponse<LoginResponse>>
 
-    fun registration(registrationRфequest: RegistrationRequest):Flow<ApiResponse<RegistrationResponse>>
-
-
+    fun registration(registrationRequest: RegistrationRequest):Flow<ApiResponse<RegistrationResponse>>
 }

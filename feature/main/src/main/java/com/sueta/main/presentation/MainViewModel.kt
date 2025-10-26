@@ -3,24 +3,48 @@ package com.sueta.main.presentation
 import androidx.lifecycle.viewModelScope
 import com.sueta.core.mLog
 import com.sueta.core.presentation.BaseViewModel
+import com.sueta.core.presentation.CoroutinesErrorHandler
+import com.sueta.main.data.mapper.toGeoPoint
+import com.sueta.main.data.mapper.toMarkers
+import com.sueta.main.data.mapper.toRoute
+import com.sueta.main.domain.repository.MainRepository
+import com.sueta.main.presentation.model.PointType
+import com.sueta.main.presentation.model.TransportType
+import com.sueta.network.ApiResponse
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.debounce
 import kotlinx.coroutines.launch
+import ru.dgis.sdk.DGis
 import ru.dgis.sdk.DgisObjectId
 import ru.dgis.sdk.Meter
 import ru.dgis.sdk.coordinates.GeoPoint
 import ru.dgis.sdk.directory.SearchManager
 import ru.dgis.sdk.directory.SearchQueryBuilder
+import ru.dgis.sdk.geometry.GeoPointWithElevation
 import ru.dgis.sdk.map.DgisMapObject
 import ru.dgis.sdk.map.DgisSource
+import ru.dgis.sdk.map.MapObjectManager
+import ru.dgis.sdk.map.Marker
+import ru.dgis.sdk.map.MarkerOptions
 import ru.dgis.sdk.map.RenderedObject
+import ru.dgis.sdk.map.RouteEditorSource
+import ru.dgis.sdk.routing.BicycleRouteSearchOptions
+import ru.dgis.sdk.routing.CarRouteSearchOptions
+import ru.dgis.sdk.routing.PedestrianRouteSearchOptions
+import ru.dgis.sdk.routing.RouteEditor
+import ru.dgis.sdk.routing.RouteEditorRouteParams
+import ru.dgis.sdk.routing.RouteSearchOptions
+import ru.dgis.sdk.routing.RouteSearchPoint
+import ru.dgis.sdk.routing.RouteSearchType
 import javax.inject.Inject
 import kotlin.time.Duration.Companion.milliseconds
 
 @HiltViewModel
-class MainViewModel @Inject constructor(private val searchManager: SearchManager) :
-    BaseViewModel<MainContract.Event, MainContract.State, MainContract.Effect>() {
+class MainViewModel @Inject constructor(
+    private val repository: MainRepository,
+    private val searchManager: SearchManager,
+) : BaseViewModel<MainContract.Event, MainContract.State, MainContract.Effect>() {
 
 
     private val SearchQueryChangesFlow = MutableSharedFlow<String>()
@@ -40,9 +64,9 @@ class MainViewModel @Inject constructor(private val searchManager: SearchManager
     override fun handleEvents(event: MainContract.Event) {
         mLog("HANDLE", viewState.value.isPointPickOnMap.toString())
         when (event) {
-            MainContract.Event.ProfileButtonCLicked -> setEffect { MainContract.Effect.Navigation.toSelfProfile }
+            MainContract.Event.OnProfileButtonCLicked -> setEffect { MainContract.Effect.Navigation.toSelfProfile }
 
-            is MainContract.Event.BudgetClicked -> setState {
+            is MainContract.Event.OnBudgetClicked -> setState {
                 copy(
                     bottomSheetState = bottomSheetState.copy(
                         selectedBudget = event.budgetType
@@ -50,7 +74,7 @@ class MainViewModel @Inject constructor(private val searchManager: SearchManager
                 )
             }
 
-            is MainContract.Event.TravelStyleClicked -> setState {
+            is MainContract.Event.OnTravelStyleClicked -> setState {
                 copy(
                     bottomSheetState = bottomSheetState.copy(
                         selectedStyle = event.travelStyle
@@ -58,7 +82,8 @@ class MainViewModel @Inject constructor(private val searchManager: SearchManager
                 )
 
             }
-            is MainContract.Event.RouteTypeClicked -> setState {
+
+            is MainContract.Event.OnRouteTypeClicked -> setState {
                 copy(
                     bottomSheetState = bottomSheetState.copy(
                         selectedRouteType = event.routeType
@@ -67,9 +92,28 @@ class MainViewModel @Inject constructor(private val searchManager: SearchManager
 
             }
 
+            is MainContract.Event.RouteEvent.OnTransportTypeClicked -> {
+                setState {
+                    copy(
+                        routeBottomSheetState = routeBottomSheetState.copy(
+                            selectedTransportType = event.transportType
+                        )
+                    )
+                }
+                getRoute()
+            }
 
-            MainContract.Event.GoButtonCLicked -> {}
-            MainContract.Event.HistoryButtonCLicked -> setEffect { MainContract.Effect.Navigation.toHistory }
+
+            MainContract.Event.OnGoButtonCLicked -> {
+                if (viewState.value.pointSelectionState.startPoint != null && viewState.value.pointSelectionState.endPoint != null) {
+                    getRoute()
+//                    setState { copy(routeBottomSheetState = routeBottomSheetState.copy()) }
+                } else {
+                    setEffect { MainContract.Effect.PointsNotSelected }
+                }
+            }
+
+            MainContract.Event.OnHistoryButtonCLicked -> setEffect { MainContract.Effect.Navigation.toHistory }
             is MainContract.Event.PointSelectionEvent.OnSearchChanged -> {
                 setState {
                     copy(pointSelectionState = pointSelectionState.copy(searchQuery = event.query))
@@ -84,10 +128,10 @@ class MainViewModel @Inject constructor(private val searchManager: SearchManager
             MainContract.Event.PointSelectionEvent.OnMapSelectionSelected -> {
                 setState {
                     copy(
-                        showPointSelectBottomSheet = false,
-                        isPointPickOnMap = true
+                        showPointSelectBottomSheet = false, isPointPickOnMap = true
                     )
                 }
+
 
             }
 
@@ -129,21 +173,39 @@ class MainViewModel @Inject constructor(private val searchManager: SearchManager
                 )
             }
 
+            MainContract.Event.RouteEvent.OnDismissPlaceDetailsBottomSheet -> setState {
+                copy(
+                    routeBottomSheetState = routeBottomSheetState.copy(selectedPlace = null),
+                    showPlaceDetailsBottomSheet = false
+                )
+            }
+
+            is MainContract.Event.RouteEvent.OnPlaceItemClicked -> setState {
+                copy(
+                    routeBottomSheetState = routeBottomSheetState.copy(selectedPlace = event.place),
+                    showPlaceDetailsBottomSheet = true
+                )
+            }
+
+            MainContract.Event.RouteEvent.OnRouteBottomSheetBackPressed -> setState {
+                copy(
+                    routeBottomSheetState = routeBottomSheetState.copy(
+                        selectedPlace = null, selectedEvent = null, route = null
+                    ),
+                )
+            }
+
         }
 
 
     }
 
-    fun search(query: String) {
+    private fun search(query: String) {
 
         if (query.isEmpty()) return
 
-        val searchQuery = SearchQueryBuilder
-            .fromQueryText(query)
-            .setPageSize(10)
-            .setGeoPoint(GeoPoint(47.237422, 39.712262)) // центр поиска
-            .setRadius(Meter(5000f))
-            .build()
+        val searchQuery = SearchQueryBuilder.fromQueryText(query).setPageSize(10)
+            .setGeoPoint(GeoPoint(47.237422, 39.712262)).setRadius(Meter(5000f)).build()
 
         searchManager.search(searchQuery).onResult { searchResult ->
             val firstPage = searchResult.firstPage
@@ -153,12 +215,11 @@ class MainViewModel @Inject constructor(private val searchManager: SearchManager
 
     }
 
-    fun setPointByRenderedObject(renderedObject: RenderedObject) {
+    private fun setPointByRenderedObject(renderedObject: RenderedObject) {
         val source = renderedObject.source as DgisSource
         val id = (renderedObject.item as DgisMapObject).id
 
-        searchManager.searchByDirectoryObjectId(id)
-            .onResult onDirectoryObjectReady@{
+        searchManager.searchByDirectoryObjectId(id).onResult onDirectoryObjectReady@{
                 val obj = it ?: return@onDirectoryObjectReady
 
                 if (viewState.value.isPointPickOnMap) {
@@ -183,6 +244,128 @@ class MainViewModel @Inject constructor(private val searchManager: SearchManager
                 source.setHighlighted(source.highlightedObjects, false)
                 source.setHighlighted(entrancesIds, true)
             }
+    }
+
+    private fun getRoute() {
+        baseRequest(errorHandler = object : CoroutinesErrorHandler {
+            override fun onError(message: String) {
+                setState { copy(error = message) }
+//                    setEffect { CurrencyEffect.ShowError(message) }
+            }
+        }, request = {
+            repository.createRoute(
+                startPoint = viewState.value.pointSelectionState.startPoint?.toGeoPoint()
+                    ?: GeoPoint(0.0, 0.0),
+                endPoint = viewState.value.pointSelectionState.endPoint?.toGeoPoint() ?: GeoPoint(
+                    0.0,
+                    0.0
+                ),
+                style = viewState.value.bottomSheetState.selectedStyle,
+                length = viewState.value.bottomSheetState.selectedRouteType,
+                budget = viewState.value.bottomSheetState.selectedBudget
+            )
+        }, onSuccess = { response ->
+            when (response) {
+                is ApiResponse.Success -> {
+                    setState {
+                        copy(
+                            routeBottomSheetState = routeBottomSheetState.copy(route = response.data.toRoute()),
+                            isLoading = false
+                        )
+                    }
+                    setRouteOnMap()
+//                        setEffect { ProfileContract.Effect.ProfileWasLoaded }
+                }
+
+                is ApiResponse.Failure -> setState { copy(error = response.errorMessage) }
+                is ApiResponse.Loading -> setState {
+                    copy(
+                        isLoading = true,
+                        error = null,
+                    )
+                }
+            }
+        })
+    }
+
+    private fun setRouteOnMap() {
+        viewModelScope.launch {
+            viewState.value.map.collect {
+                it?.let { map ->
+                    val sdkContext = DGis.context()
+                    val routeEditor = RouteEditor(sdkContext)
+                    val routeEditorSource = RouteEditorSource(sdkContext, routeEditor)
+                    if (routeEditorSource in it.sources) {
+                        it.removeSource(routeEditorSource)
+                    }
+                    it.addSource(routeEditorSource)
+
+                    val pedestrianOptions = RouteSearchOptions(
+                        pedestrian = PedestrianRouteSearchOptions(
+                            avoidStairways = true,
+                            avoidUnderpassesAndOverpasses = true,
+                            useIndoor = false,
+                        )
+                    )
+                    val bikeOptions = RouteSearchOptions(
+                        bicycle = BicycleRouteSearchOptions(
+                            avoidCarRoads = true,
+                            avoidStairways = true,
+                            avoidUnderpassesAndOverpasses = true,
+                        )
+                    )
+
+                    val carOptions = RouteSearchOptions(
+                        car = CarRouteSearchOptions(
+                            avoidTollRoads = true,
+                            avoidUnpavedRoads = true,
+                            avoidFerries = true,
+                            avoidLockedRoads = true,
+                            routeSearchType = RouteSearchType.JAM,
+                        )
+                    )
+
+                    val options =
+                        when (viewState.value.routeBottomSheetState.selectedTransportType) {
+                            TransportType.WALKING -> pedestrianOptions
+                            TransportType.CAR -> carOptions
+                            TransportType.BICYCLE -> bikeOptions
+                        }
+
+                    val startPoint = RouteSearchPoint(
+                        coordinates = viewState.value.pointSelectionState.startPoint?.toGeoPoint()
+                            ?: GeoPoint(0.0, 0.0)
+                    )
+
+                    val finishPoint = RouteSearchPoint(
+                        coordinates = viewState.value.pointSelectionState.endPoint?.toGeoPoint()
+                            ?: GeoPoint(0.0, 0.0)
+                    )
+
+
+                    val mapObjectManager = MapObjectManager(map)
+                    viewState.value.routeBottomSheetState.route?.places?.toMarkers(sdkContext)?.forEach {
+                        mapObjectManager.addObject(it)
+
+                    }
+
+
+                    routeEditor.setRouteParams(
+                        RouteEditorRouteParams(
+                            startPoint = startPoint,
+                            finishPoint = finishPoint,
+                            routeSearchOptions = options,
+                            intermediatePoints = emptyList()
+                        )
+                    )
+
+
+                }
+
+            }
+        }
+
+
     }
 
 }

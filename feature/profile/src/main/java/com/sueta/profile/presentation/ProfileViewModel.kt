@@ -2,21 +2,26 @@ package com.sueta.profile.presentation
 
 import android.net.Uri
 import android.util.Log
+import androidx.lifecycle.viewModelScope
+import com.sueta.core.domain.UserStorage
 import com.sueta.core.presentation.BaseViewModel
 import com.sueta.core.presentation.CoroutinesErrorHandler
 import com.sueta.network.ApiResponse
 import com.sueta.network.presentation.ImageManager
 import com.sueta.profile.data.mapper.toProfile
 import com.sueta.profile.data.mapper.toRequest
+import com.sueta.profile.data.mapper.toStringSet
 import com.sueta.profile.domain.repository.ProfileRepository
 import com.sueta.profile.presentation.model.Profile
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
 class ProfileViewModel @Inject constructor(
     private val repository: ProfileRepository,
     private val imageManager: ImageManager,
+    private val userStorage: UserStorage
 ) : BaseViewModel<ProfileContract.Event, ProfileContract.State, ProfileContract.Effect>() {
     override fun setInitialState(): ProfileContract.State = ProfileContract.State()
 
@@ -122,7 +127,11 @@ class ProfileViewModel @Inject constructor(
             onSuccess = { response ->
                 when (response) {
                     is ApiResponse.Success -> {
-                        setState { copy(profile = response.data.toProfile(), isLoading = false) }
+                        val profile = response.data.toProfile()
+                        setState { copy(profile = profile, isLoading = false) }
+                        viewModelScope.launch {
+                            userStorage.setCategories(profile.interests.toStringSet())
+                        }
 //                        setEffect { ProfileContract.Effect.ProfileWasLoaded }
                     }
 

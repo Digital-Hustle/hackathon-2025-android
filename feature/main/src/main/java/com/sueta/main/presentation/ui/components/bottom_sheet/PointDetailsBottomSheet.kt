@@ -1,4 +1,4 @@
-package com.sueta.main.presentation.ui.components
+package com.sueta.main.presentation.ui.components.bottom_sheet
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -24,8 +24,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
-import com.sueta.core.mLog
-import com.sueta.main.data.toStringAddress
+import com.sueta.main.data.mapper.toStringAddress
 import ru.dgis.sdk.directory.DirectoryObject
 
 @OptIn(ExperimentalMaterial3Api::class)

@@ -36,3 +36,13 @@ fun List<String>.toInterestSet(): Set<Interest> {
         Interest.entries.find { it.value == string }
     }.toSet()
 }
+
+fun Set<Interest>.toStringSet(): Set<String> {
+    return this.map { it.value }.toSet()
+}
+
+fun Set<String>.toInterestSet(): Set<Interest> {
+    return this.mapNotNull { string ->
+        Interest.entries.find { it.value == string }
+    }.toSet()
+}

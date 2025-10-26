@@ -1,20 +1,24 @@
 package com.sueta.onboarding.presentation
 
 import android.annotation.SuppressLint
+import androidx.lifecycle.viewModelScope
+import com.sueta.core.domain.UserStorage
 import com.sueta.core.presentation.BaseViewModel
 import com.sueta.core.presentation.CoroutinesErrorHandler
 import com.sueta.network.ApiResponse
-import com.sueta.onboarding.data.mapper.toProfile
 import com.sueta.onboarding.data.mapper.toRequest
+import com.sueta.onboarding.data.mapper.toStringSet
 import com.sueta.onboarding.domain.repository.OnboardingRepository
 import com.sueta.onboarding.presentation.model.Profile
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.launch
 import java.time.format.DateTimeFormatter
 import javax.inject.Inject
 
 @HiltViewModel
 class OnboardingViewModel @Inject constructor(
     private val repository: OnboardingRepository,
+    private val userStorage: UserStorage
 ) : BaseViewModel<OnboardingContract.Event, OnboardingContract.State, OnboardingContract.Effect>() {
     override fun setInitialState(): OnboardingContract.State = OnboardingContract.State()
 
@@ -44,7 +48,14 @@ class OnboardingViewModel @Inject constructor(
                                 OnboardingContract.Effect.FieldsIsEmpty("Заполните имя и фамилию!")
                             }
                         } else {
-                            setState { copy(currentStage = OnboardingStage.BIRTH_DATE) }
+                            setState {
+                                copy(
+                                    currentStage = OnboardingStage.BIRTH_DATE,
+                                    label = "Когда вы родились?",
+                                    description = "Мы учтем это при планировании ваших путешествий"
+                                )
+
+                            }
                         }
                     }
 
@@ -54,7 +65,13 @@ class OnboardingViewModel @Inject constructor(
                                 OnboardingContract.Effect.FieldsIsEmpty("Поле не может быть пустым!")
                             }
                         } else {
-                            setState { copy(currentStage = OnboardingStage.INTERESTS) }
+                            setState {
+                                copy(
+                                    currentStage = OnboardingStage.INTERESTS,
+                                    label = "Ваши интересы",
+                                    description = "Выберите темы, которые вам интересны"
+                                )
+                            }
                         }
                     }
 
@@ -62,16 +79,18 @@ class OnboardingViewModel @Inject constructor(
                         if (viewState.value.interests.isEmpty()) {
                             setEffect { OnboardingContract.Effect.FieldsIsEmpty("Выберите хотя-бы один...") }
                         } else {
-                            setProfile(Profile(
-                                birth = viewState.value.birthDate?.format(
-                                    DateTimeFormatter.ofPattern(
-                                        "dd.MM.yyyy"
-                                    )
-                                )?:"13.12.1489",
-                                name = viewState.value.name,
-                                surname = viewState.value.surname,
-                                interests = viewState.value.interests
-                            ))
+                            setProfile(
+                                Profile(
+                                    birth = viewState.value.birthDate?.format(
+                                        DateTimeFormatter.ofPattern(
+                                            "dd.MM.yyyy"
+                                        )
+                                    ) ?: "13.12.1489",
+                                    name = viewState.value.name,
+                                    surname = viewState.value.surname,
+                                    interests = viewState.value.interests
+                                )
+                            )
                             setEffect { OnboardingContract.Effect.Navigation.ToMain }
                         }
                     }
@@ -95,6 +114,9 @@ class OnboardingViewModel @Inject constructor(
                     is ApiResponse.Success -> {
 //                        setState { copy(profile = response.data.toProfile(), isLoading = false) }
 //                        setEffect { ProfileContract.Effect.ProfileWasLoaded }
+                        viewModelScope.launch {
+                            userStorage.setCategories(profile.interests.toStringSet())
+                        }
                     }
 
                     is ApiResponse.Failure -> setState { copy(error = response.errorMessage) }

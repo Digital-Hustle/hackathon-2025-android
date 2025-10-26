@@ -5,7 +5,7 @@ import com.sueta.auth.domain.models.LoginRequest
 import com.sueta.auth.domain.models.LoginResponse
 import com.sueta.auth.domain.models.RegistrationRequest
 import com.sueta.auth.domain.models.RegistrationResponse
-import com.sueta.authtest.domain.repository.AuthRepository
+import com.sueta.auth.domain.repository.AuthRepository
 import com.sueta.core.domain.UserStorage
 import com.sueta.core.presentation.di.Mockup
 import com.sueta.network.ApiResponse
@@ -17,7 +17,7 @@ class AuthMockRepository @Inject constructor(
     private val storage: UserStorage,
     private val googleManager: GoogleManager
 ) : AuthRepository, Mockup {
-    override suspend fun setId(id: Int) {
+    override suspend fun setId(id: String) {
         storage.setId(id)
     }
 
@@ -31,7 +31,7 @@ class AuthMockRepository @Inject constructor(
                 ApiResponse.Success(
                     LoginResponse(
                         token = "mock-jwt-token-12345",
-                        id = 34,
+                        id = "34",
                         username = loginRequest.username,
                         refreshToken = "mock-jwt-refresh-12345"
                     )
@@ -48,7 +48,7 @@ class AuthMockRepository @Inject constructor(
                 ApiResponse.Success(
                     LoginResponse(
                         token = "mock-jwt-token-12345",
-                        id = 34,
+                        id = "34",
                         username = "Test User",
                         refreshToken = "mock-jwt-refresh-12345"
                     )

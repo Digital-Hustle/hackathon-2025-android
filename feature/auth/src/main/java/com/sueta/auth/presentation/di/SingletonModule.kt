@@ -6,7 +6,7 @@ import com.sueta.auth.data.repository.AuthMockRepository
 
 import com.sueta.auth.data.auth.GoogleManager
 import com.sueta.authtest.data.repository.AuthRepositoryImpl
-import com.sueta.authtest.domain.repository.AuthRepository
+import com.sueta.auth.domain.repository.AuthRepository
 import com.sueta.core.domain.UserStorage
 import com.sueta.core.presentation.di.RepositoryFactory
 

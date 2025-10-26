@@ -24,8 +24,8 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
-import com.sueta.main.data.toStringAddress
-import com.sueta.main.presentation.PointType
+import com.sueta.main.data.mapper.toStringAddress
+import com.sueta.main.presentation.model.PointType
 import ru.dgis.sdk.directory.DirectoryObject
 
 @Composable

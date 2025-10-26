@@ -1,4 +1,4 @@
-package com.sueta.main.presentation.ui.components
+package com.sueta.main.presentation.ui.components.bottom_sheet
 
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -32,16 +32,16 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
-import com.sueta.main.data.toStringAddress
-import com.sueta.main.presentation.PointSelectionState
-import com.sueta.main.presentation.PointType
+import com.sueta.main.data.mapper.toStringAddress
+import com.sueta.main.presentation.MainContract
+import com.sueta.main.presentation.model.PointType
 import ru.dgis.sdk.directory.DirectoryObject
 
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun PointSelectionBottomSheet(
-    state: PointSelectionState,
+    state: MainContract.PointSelectionState,
     onSearchQueryChange: (String) -> Unit,
     onMapSelectionSelected: () -> Unit,
     onSearchResultSelected: (PointType, DirectoryObject) -> Unit,
